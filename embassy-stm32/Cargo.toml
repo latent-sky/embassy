@@ -106,6 +106,9 @@ stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", ta
 [features]
 default = ["rt"]
 
+## Enable to disable rcc frequency detection
+unsafe-frequency-check = []
+
 ## Enable `stm32-metapac`'s `rt` feature
 rt = ["stm32-metapac/rt"]
 

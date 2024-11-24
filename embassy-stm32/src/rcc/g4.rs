@@ -229,6 +229,7 @@ pub(crate) unsafe fn init(config: Config) {
         _ => unreachable!(),
     };
 
+    #[cfg(not(feature = "unsafe-frequency-check"))]
     assert!(max::SYSCLK.contains(&sys));
 
     // Calculate the AHB frequency (HCLK), among other things so we can calculate the correct flash read latency.
