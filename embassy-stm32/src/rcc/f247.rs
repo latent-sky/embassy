@@ -205,11 +205,12 @@ pub(crate) unsafe fn init(config: Config) {
     let (pclk1, pclk1_tim) = super::util::calc_pclk(hclk, config.apb1_pre);
     let (pclk2, pclk2_tim) = super::util::calc_pclk(hclk, config.apb2_pre);
 
-    #[cfg(not(feature = "unsafe-no-frequency-check"))]
-    assert!(max::SYSCLK.contains(&sys));
-    assert!(max::HCLK.contains(&hclk));
-    assert!(max::PCLK1.contains(&pclk1));
-    assert!(max::PCLK2.contains(&pclk2));
+    if !cfg!(feature = "unsafe-no-frequency-check") {
+        assert!(max::SYSCLK.contains(&sys));
+        assert!(max::HCLK.contains(&hclk));
+        assert!(max::PCLK1.contains(&pclk1));
+        assert!(max::PCLK2.contains(&pclk2));
+    }
 
     let rtc = config.ls.init();
 

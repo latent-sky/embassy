@@ -229,15 +229,16 @@ pub(crate) unsafe fn init(config: Config) {
         _ => unreachable!(),
     };
 
-    #[cfg(not(feature = "unsafe-no-frequency-check"))]
-    assert!(max::SYSCLK.contains(&sys));
+    if !cfg!(feature = "unsafe-no-frequency-check") {
+        assert!(max::SYSCLK.contains(&sys));
 
-    // Calculate the AHB frequency (HCLK), among other things so we can calculate the correct flash read latency.
-    let hclk = sys / config.ahb_pre;
-    assert!(max::HCLK.contains(&hclk));
+        // Calculate the AHB frequency (HCLK), among other things so we can calculate the correct flash read latency.
+        let hclk = sys / config.ahb_pre;
+        assert!(max::HCLK.contains(&hclk));
 
-    let (pclk1, pclk1_tim) = super::util::calc_pclk(hclk, config.apb1_pre);
-    assert!(max::PCLK.contains(&pclk1));
+        let (pclk1, pclk1_tim) = super::util::calc_pclk(hclk, config.apb1_pre);
+        assert!(max::PCLK.contains(&pclk1));
+    }
 
     let latency = match (config.voltage_range, hclk.0) {
         (VoltageRange::RANGE1, ..=24_000_000) => Latency::WS0,

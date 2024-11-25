@@ -229,17 +229,18 @@ pub(crate) unsafe fn init(config: Config) {
         _ => unreachable!(),
     };
 
-    #[cfg(not(feature = "unsafe-no-frequency-check"))]
-    assert!(max::SYSCLK.contains(&sys));
+    if !cfg!(feature = "unsafe-no-frequency-check") {
+        assert!(max::SYSCLK.contains(&sys));
 
-    // Calculate the AHB frequency (HCLK), among other things so we can calculate the correct flash read latency.
-    let hclk = sys / config.ahb_pre;
-    assert!(max::HCLK.contains(&hclk));
+        // Calculate the AHB frequency (HCLK), among other things so we can calculate the correct flash read latency.
+        let hclk = sys / config.ahb_pre;
+        assert!(max::HCLK.contains(&hclk));
 
-    let (pclk1, pclk1_tim) = super::util::calc_pclk(hclk, config.apb1_pre);
-    let (pclk2, pclk2_tim) = super::util::calc_pclk(hclk, config.apb2_pre);
-    assert!(max::PCLK.contains(&pclk2));
-    assert!(max::PCLK.contains(&pclk2));
+        let (pclk1, pclk1_tim) = super::util::calc_pclk(hclk, config.apb1_pre);
+        let (pclk2, pclk2_tim) = super::util::calc_pclk(hclk, config.apb2_pre);
+        assert!(max::PCLK.contains(&pclk2));
+        assert!(max::PCLK.contains(&pclk2));
+    }
 
     // Configure Core Boost mode ([RM0440] p234 – inverted because setting r1mode to 0 enables boost mode!)
     if config.boost {
